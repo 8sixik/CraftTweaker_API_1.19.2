@@ -1,3 +1,14 @@
+import crafttweaker.api.events.CTEventManager;
+import crafttweaker.api.entity.Entity;
+import crafttweaker.api.entity.EntityType;
+import crafttweaker.api.entity.type.player.Player;
+import crafttweaker.api.block.BlockState;
+import crafttweaker.api.world.ServerLevel;
+import crafttweaker.api.util.math.BlockPos;
+import crafttweaker.api.world.Level;
+import crafttweaker.api.block.Block;
+import crafttweaker.api.util.math.RandomSource;
+
 public class PlayerEventBlock {
     private static var playerList = {} as Player[string];
     private static var playerPlaceBlock = {} as BlockState[Player];
