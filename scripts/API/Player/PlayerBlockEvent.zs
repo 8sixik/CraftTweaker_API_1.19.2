@@ -30,9 +30,6 @@ public class PlayerEventBlock {
     public static setTransBlock(block as Block, block2 as BlockState) as void {
         this.transmutateBlock[block] = block2;
     }
-    public static setTransBlock(block as BlockState[Block]) as void {
-        this.transmutateBlock = block;
-    }
 
     public static savePlayerBlock(player as Player, Block as BlockState, BlockPos as BlockPos) as void{
         this.playerPlaceBlock[player] = Block;
@@ -41,14 +38,8 @@ public class PlayerEventBlock {
     public static saveBlockPos(block as BlockState, bPos as BlockPos) as void{
         this.blockData[bPos] = block;
     }
-    public static saveBlockPos(block as BlockState[BlockPos]) as void{
-        this.blockData = block;
-    }
     public static setOreData(block as BlockState, bPos as BlockPos) as void{
         this.blockOreData[bPos] = block;
-    }
-    public static setOreData(block as BlockState[BlockPos]) as void{
-        this.blockOreData = block;
     }
     public static setRandomBlock (block as BlockState[]) as void {
         this.randomBlock = block;
@@ -56,9 +47,7 @@ public class PlayerEventBlock {
     public static setOreReplace(block as BlockState, block2 as Block) as void{
         this.oreReplace[block2] = block;
     }
-    public static setOreReplace(block as BlockState[Block]) as void{
-        this.oreReplace = block;
-    }
+
 
 
     public static getPlayer(player as Player) as Player{
@@ -143,39 +132,10 @@ public class PlayerEventBlock {
         }
     }
 
-    public static ReplaceOre(mainBlockPos as BlockPos, num as int, level as Level, ran as int) as void{
-        var x1 = mainBlockPos.x - num;
-        var y1 = mainBlockPos.y - num;
-        var z1 = (mainBlockPos.z - num) - 1;
-        var x2 = (mainBlockPos.x + num);
-        var y2 = (mainBlockPos.y + num);
-        var z2 = (mainBlockPos.z + num) - 1;
-        var x = x1;
-        var y = y1;
-        var z = z1;
-        while(x <= x2){
-            while(y <= y2){
-                while(z <= z2){
-                    z++;
-                    switch (ran) {
-                        case 1:
-                            blockOreData[new BlockPos(x, y, z)] = level.getBlockState(new BlockPos(x, y, z));
-                            break;
-                        case 2:
-                            if(isOre(level.getBlockState(new BlockPos(x, y, z)))){
-                                level.setBlockAndUpdate(new BlockPos(x, y, z), oreRep(level.getBlockState(new BlockPos(x, y, z)), 2));
-                                break;
-                            }
-                        default:
-                            return;
-                    }
-                }
-                y++;
-                z = z1; 
-            }
-            x++;
-            y = y1;
-        }    
+    public static BackOre(level as Level) as void{
+        for i in blockOreData{
+            level.setBlockAndUpdate(i, blockOreData[i]);
+        }
     }
 
     public static TransmutateBlock(mainBlockPos as BlockPos, num as int, level as Level, ran as int) as void{
@@ -233,7 +193,7 @@ public class PlayerEventBlock {
                 }
             }
         }
-        else{
+        if!(isEmpty(7)){
             for i in blackListTBlock{
                 if (block.block == i){
                     return false;
@@ -242,6 +202,9 @@ public class PlayerEventBlock {
                     return true;
                 }
             }
+        }
+        else{
+            return true;
         }
         return false;
     }
@@ -260,6 +223,8 @@ public class PlayerEventBlock {
         }
         return true;
     }
+
+    // public static oreRep(block as BlockState)
 
     public static BlockTransmutate(block as BlockState) as BlockState{
         var bState = block;
@@ -288,6 +253,28 @@ public class PlayerEventBlock {
         return <blockstate:minecraft:air>;
     }
 
+    public static isOre(b as BlockState) as bool{
+        var blockS = b;
+        var block = b.block;
+        if(<tag:blocks:forge:ores>.contains(block)){
+            return true;
+        }
+        else{
+            return false;
+        }
+        return false;
+    }
+
+    public static transBlock(level as Level) as bool {
+        var randomB = level.random.nextBoolean();
+        if(randomB){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
     public static oreRep(block as BlockState, type as int) as BlockState{
         var bState = block;
         var b = block.block;
@@ -312,25 +299,42 @@ public class PlayerEventBlock {
         return <blockstate:minecraft:air>;
     }
 
-    public static isOre(b as BlockState) as bool{
-        var blockS = b;
-        var block = b.block;
-        if(<tag:blocks:forge:ores>.contains(block)){
-            return true;
-        }
-        else{
-            return false;
-        }
-        return false;
-    }
-
-    public static transBlock(level as Level) as bool {
-        var randomB = level.random.nextBoolean();
-        if(randomB){
-            return true;
-        }
-        else{
-            return false;
-        }
+    
+    public static ReplaceOre(mainBlockPos as BlockPos, num as int, level as Level, ran as int) as void{
+        var x1 = mainBlockPos.x - num;
+        var y1 = mainBlockPos.y - num;
+        var z1 = (mainBlockPos.z - num) - 1;
+        var x2 = (mainBlockPos.x + num);
+        var y2 = (mainBlockPos.y + num);
+        var z2 = (mainBlockPos.z + num) - 1;
+        var x = x1;
+        var y = y1;
+        var z = z1;
+        while(x <= x2){
+            while(y <= y2){
+                while(z <= z2){
+                    z++;
+                    switch (ran) {
+                        case 1:
+                            if(isOre(level.getBlockState(new BlockPos(x, y, z)))){
+                                println('da');
+                                blockOreData[new BlockPos(x, y, z)] = level.getBlockState(new BlockPos(x, y, z));
+                            }
+                            break;
+                        case 2:
+                            if(isOre(level.getBlockState(new BlockPos(x, y, z)))){
+                                level.setBlockAndUpdate(new BlockPos(x, y, z), oreRep(level.getBlockState(new BlockPos(x, y, z)), 2));
+                            }
+                            break;
+                        default:
+                            return;
+                    }
+                }
+                y++;
+                z = z1; 
+            }
+            x++;
+            y = y1;
+        }    
     }
 }
