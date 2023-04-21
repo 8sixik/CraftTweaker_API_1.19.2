@@ -30,6 +30,10 @@ public class PlayerEventBlock {
     public static setTransBlock(block as Block, block2 as BlockState) as void {
         this.transmutateBlock[block] = block2;
     }
+    public static setTransBlock(block as BlockState[Block]) as void {
+        this.transmutateBlock = block;
+    }
+
     public static savePlayerBlock(player as Player, Block as BlockState, BlockPos as BlockPos) as void{
         this.playerPlaceBlock[player] = Block;
         this.playerPlaceBlockPos[player] = BlockPos;
@@ -37,8 +41,14 @@ public class PlayerEventBlock {
     public static saveBlockPos(block as BlockState, bPos as BlockPos) as void{
         this.blockData[bPos] = block;
     }
+    public static saveBlockPos(block as BlockState[BlockPos]) as void{
+        this.blockData = block;
+    }
     public static setOreData(block as BlockState, bPos as BlockPos) as void{
         this.blockOreData[bPos] = block;
+    }
+    public static setOreData(block as BlockState[BlockPos]) as void{
+        this.blockOreData = block;
     }
     public static setRandomBlock (block as BlockState[]) as void {
         this.randomBlock = block;
@@ -46,7 +56,9 @@ public class PlayerEventBlock {
     public static setOreReplace(block as BlockState, block2 as Block) as void{
         this.oreReplace[block2] = block;
     }
-
+    public static setOreReplace(block as BlockState[Block]) as void{
+        this.oreReplace = block;
+    }
 
 
     public static getPlayer(player as Player) as Player{
